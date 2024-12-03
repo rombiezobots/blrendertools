@@ -136,17 +136,16 @@ class BLRENDERTOOLS_OT_manage_image_sequences(bpy.types.Operator):
     def draw(self, context):
         lay = self.layout
         images = [img for img in bpy.data.images if img.source == 'SEQUENCE']
+        row = lay.row(align=True)
+        row.operator('blrendertools.guess_frame_range', icon='RIGHTARROW')
+        row.operator('blrendertools.update_image_sequence_nodes', icon='NODE')
         box = lay.box()
         for img in images:
             row = box.row(align=True)
             row.prop(img, 'name', text='')
-            guess = row.operator('blrendertools.guess_frame_range', icon='RIGHTARROW', text='')
-            guess.image_name = img.name
             row.prop(img.blrendertools, 'frame_start')
             row.prop(img.blrendertools, 'frame_end')
             row.prop(img.blrendertools, 'frame_entry')
-            update = row.operator('blrendertools.update_image_sequence_nodes', icon='NODE', text='')
-            update.image_name = img.name
 
     def execute(self, context):
         return {'FINISHED'}
@@ -156,17 +155,17 @@ class BLRENDERTOOLS_OT_guess_frame_range(bpy.types.Operator):
     '''Guess image sequence start and end frames'''
 
     bl_idname = 'blrendertools.guess_frame_range'
-    bl_label = 'Guess'
+    bl_label = 'Guess Frame Ranges'
     bl_options = {'BLOCKING'}
 
-    image_name: bpy.props.StringProperty()
-
     def execute(self, context):
-        img = bpy.data.images[self.image_name]
-        node = next(n for n in context.scene.node_tree.nodes if n.type == 'IMAGE' and n.image == img)
-        img.blrendertools.frame_start = node.frame_start
-        img.blrendertools.frame_end = node.frame_start + node.frame_duration - 1
-        img.blrendertools.frame_entry = node.frame_start
+        images = [img for img in bpy.data.images if img.source == 'SEQUENCE']
+        for img in images:
+            first_node = next((n for n in context.scene.node_tree.nodes if n.type == 'IMAGE' and n.image == img), None)
+            if first_node:
+                img.blrendertools.frame_start = first_node.frame_start
+                img.blrendertools.frame_end = first_node.frame_start + first_node.frame_duration - 1
+                img.blrendertools.frame_entry = 2 * first_node.frame_start - first_node.frame_offset - 1
         return {'FINISHED'}
 
 
@@ -177,15 +176,14 @@ class BLRENDERTOOLS_OT_update_image_sequence_nodes(bpy.types.Operator):
     bl_label = 'Update Nodes'
     bl_options = {'BLOCKING'}
 
-    image_name: bpy.props.StringProperty()
-
     def execute(self, context):
-        img = bpy.data.images[self.image_name]
-        nodes = [n for n in context.scene.node_tree.nodes if n.type == 'IMAGE' and n.image == img]
-        for node in nodes:
-            node.frame_duration = img.blrendertools.frame_end - img.blrendertools.frame_start + 1
-            node.frame_start = img.blrendertools.frame_start
-            node.frame_offset = img.blrendertools.frame_entry - 1
+        images = [img for img in bpy.data.images if img.source == 'SEQUENCE']
+        for img in images:
+            nodes = [n for n in context.scene.node_tree.nodes if n.type == 'IMAGE' and n.image == img]
+            for node in nodes:
+                node.frame_duration = img.blrendertools.frame_end - img.blrendertools.frame_start + 1
+                node.frame_start = img.blrendertools.frame_start
+                node.frame_offset = img.blrendertools.frame_entry - 1
         return {'FINISHED'}
 
 
