@@ -24,12 +24,18 @@ class PROPERTIES_PT_layer_manager(bpy.types.Panel):
         lay.use_property_decorate = False
 
         for layer in bpy.context.scene.view_layers:
-            row = lay.row(align=True)
+            box = lay.box()
+            col = box.column(align=True)
+            row = col.row(align=True)
             row.prop(layer, 'use', text='')
             row.prop(layer, 'name', text='')
             man = row.operator('blrendertools.manage_layer_collections', icon='OUTLINER_COLLECTION', text='')
             man.layer_name = layer.name
-            row.operator('blrendertools.delete_view_layer', icon='X', text='')
+            delete_view_layer = row.operator('blrendertools.delete_view_layer', icon='X', text='')
+            delete_view_layer.layer_name = layer.name
+            row = col.row(align=True)
+            row.prop(layer, 'samples')
+            row.prop(layer, 'material_override', text='')
 
 
 class PROPERTIES_PT_material_manager(bpy.types.Panel):
