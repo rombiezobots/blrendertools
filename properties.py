@@ -47,7 +47,6 @@ class BlrendertoolsMaterialProperties(bpy.types.PropertyGroup):
 
 class BlrendertoolsSceneProperties(bpy.types.PropertyGroup):
 
-    view_layer_index: bpy.props.IntProperty()
     material_tags: bpy.props.CollectionProperty(name='Tags', type=BlrendertoolsMaterialTag)
 
 

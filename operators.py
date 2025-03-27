@@ -97,10 +97,11 @@ class BLRENDERTOOLS_OT_delete_view_layer(bpy.types.Operator):
     bl_label = 'Delete View Layer'
     bl_options = {'BLOCKING'}
 
+    layer_name: bpy.props.StringProperty()
+
     def execute(self, context):
         if len(context.scene.view_layers) > 1:
-            index = context.scene.blrendertools.view_layer_index
-            context.scene.view_layers.remove(context.scene.view_layers[index])
+            context.scene.view_layers.remove(context.scene.view_layers[self.layer_name])
         return {'FINISHED'}
 
 
