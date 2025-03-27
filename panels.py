@@ -36,6 +36,7 @@ class PROPERTIES_PT_layer_manager(bpy.types.Panel):
             row = col.row(align=True)
             row.prop(layer, 'samples')
             row.prop(layer, 'material_override', text='')
+            row.prop(layer, 'world_override', text='')
 
 
 class PROPERTIES_PT_material_manager(bpy.types.Panel):
