@@ -82,11 +82,11 @@ class BLRENDERTOOLS_OT_reveal_material_users(bpy.types.Operator):
     def execute(self, context):
         names = []
         for ob in bpy.data.objects:
-            if 'material_slots' in ob.keys():
+            if hasattr(ob, 'material_slots'):
                 for slot in ob.material_slots:
                     if slot.material == bpy.data.materials[self.material_name]:
                         names.append(ob.name)
-        pprint.pprint(names)
+        print(f'Material users for {self.material_name}:', names)
         return {'FINISHED'}
 
 

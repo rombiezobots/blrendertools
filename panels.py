@@ -65,7 +65,8 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
             split_name_color = row_header.split(factor=0.65, align=True)
             split_name_color.prop(mat, 'name', text='')
             split_name_color.prop(mat, 'diffuse_color', text='')
-            row_header.operator('blrendertools.reveal_material_users', text='', icon='USER')
+            reveal_material_users = row_header.operator('blrendertools.reveal_material_users', text='', icon='USER')
+            reveal_material_users.material_name = mat.name
             assign_material = row_header.operator('blrendertools.assign_material', text='', icon='MATERIAL_DATA')
             assign_material.material_name = mat.name
 
