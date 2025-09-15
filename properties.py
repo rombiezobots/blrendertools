@@ -26,6 +26,12 @@ def tags():
 ########################################################################################################################
 
 
+class MaterialSwap(bpy.types.PropertyGroup):
+
+    a: bpy.props.PointerProperty(name='Swap', type=bpy.types.Material)
+    b: bpy.props.PointerProperty(name='With', type=bpy.types.Material)
+
+
 class BlrendertoolsImageProperties(bpy.types.PropertyGroup):
 
     frame_start: bpy.props.IntProperty(name='Start')
@@ -33,21 +39,14 @@ class BlrendertoolsImageProperties(bpy.types.PropertyGroup):
     frame_entry: bpy.props.IntProperty(name='Entry')
 
 
-class BlrendertoolsMaterialTag(bpy.types.PropertyGroup):
-
-    name: bpy.props.StringProperty(default='Tag')
-
-
 class BlrendertoolsMaterialProperties(bpy.types.PropertyGroup):
 
     is_panel_open: bpy.props.BoolProperty(default=False)
-    tags: bpy.props.CollectionProperty(name='Tags', type=BlrendertoolsMaterialTag)
-    tag_index: bpy.props.IntProperty(name='Tag')
 
 
 class BlrendertoolsSceneProperties(bpy.types.PropertyGroup):
 
-    material_tags: bpy.props.CollectionProperty(name='Tags', type=BlrendertoolsMaterialTag)
+    materials_to_swap: bpy.props.PointerProperty(name='Materials to Swap', type=MaterialSwap)
 
 
 ########################################################################################################################
@@ -56,7 +55,7 @@ class BlrendertoolsSceneProperties(bpy.types.PropertyGroup):
 
 
 classes = [
-    BlrendertoolsMaterialTag,
+    MaterialSwap,
     BlrendertoolsMaterialProperties,
     BlrendertoolsSceneProperties,
     BlrendertoolsImageProperties,

@@ -90,6 +90,24 @@ class BLRENDERTOOLS_OT_reveal_material_users(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class BLRENDERTOOLS_OT_swap_materials(bpy.types.Operator):
+    '''Swap every link to a material with one to another'''
+
+    bl_idname = 'blrendertools.swap_materials'
+    bl_label = 'Swap Materials'
+    bl_options = {'BLOCKING'}
+
+    def execute(self, context):
+        mts = context.scene.blrendertools.materials_to_swap
+        for ob in [o for o in bpy.data.objects if hasattr(o, 'material_slots')]:
+            for slot in [s for s in ob.material_slots if s.material == mts.a]:
+                slot.material = mts.b
+                print(f'Swapped {mts.a.name} for {mts.b.name} on {ob.name}')
+        mts.a = None
+        mts.b = None
+        return {'FINISHED'}
+
+
 class BLRENDERTOOLS_OT_delete_view_layer(bpy.types.Operator):
     '''Delete the selected View Layer'''
 
@@ -197,6 +215,7 @@ register, unregister = bpy.utils.register_classes_factory(
     [
         BLRENDERTOOLS_OT_assign_material,
         BLRENDERTOOLS_OT_create_material,
+        BLRENDERTOOLS_OT_swap_materials,
         BLRENDERTOOLS_OT_delete_view_layer,
         BLRENDERTOOLS_OT_guess_frame_range,
         BLRENDERTOOLS_OT_manage_image_sequences,

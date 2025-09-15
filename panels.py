@@ -49,6 +49,11 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
         lay = self.layout
         lay.operator('blrendertools.create_material', icon='ADD')
 
+        row = lay.row(align=True)
+        row.prop(context.scene.blrendertools.materials_to_swap, 'a')
+        row.prop(context.scene.blrendertools.materials_to_swap, 'b')
+        row.operator('blrendertools.swap_materials', icon='FILE_REFRESH', text='')
+
         mats = [
             m
             for m in sorted(bpy.data.materials, key=attrgetter('name'))
@@ -60,7 +65,7 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
         for mat in mats:
             panels[mat.name] = lay.panel_prop(mat.blrendertools, 'is_panel_open')
 
-            # Top row. Toggle collapse, isolate shot, shot name, and the assigned camera.
+            # Top row.
             row_header = panels[mat.name][0].row(align=True)
             split_name_color = row_header.split(factor=0.65, align=True)
             split_name_color.prop(mat, 'name', text='')
@@ -69,20 +74,13 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
             assign_material = row_header.operator('blrendertools.assign_material', text='', icon='MATERIAL_DATA')
             assign_material.material_name = mat.name
 
-            # Shot notes / description.
+            # Extras.
             if panels[mat.name][1]:
-                col_body = panels[mat.name][1].column(align=True)
-                col_body.prop(mat, 'metallic')
-                col_body.prop(mat, 'roughness')
-                col_body.template_list(
-                    listtype_name='BLRENDERTOOLS_UL_material_tags',
-                    list_id='',
-                    dataptr=mat.blrendertools,
-                    propname='tags',
-                    active_dataptr=mat.blrendertools,
-                    active_propname='tag_index',
-                    rows=5,
-                )
+                panel = panels[mat.name][1]
+                panel.use_property_split = True
+                col = panel.column(align=True)
+                col.prop(mat, 'metallic')
+                col.prop(mat, 'roughness')
 
 
 ########################################################################################################################
