@@ -13,6 +13,27 @@ else:
 
 
 ########################################################################################################################
+# Globals
+########################################################################################################################
+
+
+SUBSURF_MODIFIER_PROPERTIES = [
+    'boundary_smooth',
+    'levels',
+    'name',
+    'remove',
+    'render_levels',
+    'show_in_editmode',
+    'show_on_cage',
+    'show_only_control_edges',
+    'show_render',
+    'show_viewport',
+    'subdivision_type',
+    'uv_smooth',
+]
+
+
+########################################################################################################################
 # Operators
 ########################################################################################################################
 
@@ -72,11 +93,30 @@ class BLRENDERTOOLS_OT_manage_subdivision(bpy.types.Operator):
         col_body.prop(collection.blrendertools.subdivision, 'force_modifier')
 
     def execute(self, context):
-        objects = [
-            ob
-            for ob in bpy.data.collections[self.collection_index].objects
-            if not common.is_datablock_linked(datablock=ob)
+        # Iterate over all collections in the file that Subdivision Manager has been enabled for.
+        collections = [
+            c
+            for c in bpy.data.collections
+            if c.blrendertools.subdivision.enable and not common.is_datablock_linked(datablock=c)
         ]
+        for collection in collections:
+            settings = collection.blrendertools.subdivision
+            # Iterate over all meshes and curves in the collection.
+            for ob in [
+                o
+                for o in collection.objects
+                if o.type in ['MESH', 'CURVE'] and not common.is_datablock_linked(datablock=o)
+            ]:
+                # Find the first Subdivision Surface modifier in the stack. If there is none, and settings.force_modifier is enabled, create one. If not, continue.
+                modifier = next((m for m in ob.modifiers if m.type == 'SUBSURF'), None)
+                if not modifier and settings.force_modifier:
+                    modifier = ob.modifiers.new(name='Subdivision', type='SUBSURF')
+                if not modifier:
+                    continue
+                # Iterate over the property names in the list. For each match, transfer the setting's value to the modifier.
+                for key in SUBSURF_MODIFIER_PROPERTIES:
+                    if hasattr(modifier, key):
+                        setattr(modifier, key, getattr(settings, key))
         return {'FINISHED'}
 
 
