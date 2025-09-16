@@ -6,9 +6,7 @@
 if 'bpy' in locals():
     import importlib
 
-    common = importlib.reload(common)
 else:
-    from . import common
     import bpy
 
 
@@ -17,8 +15,16 @@ else:
 ########################################################################################################################
 
 
-def tags():
-    return [(tag.name, tag.name, tag.name) for tag in bpy.context.scene.blrendertools.material_tags]
+def on_select_swap_material_b(self, context):
+    if not (self.a or self.b):
+        return
+    # mts = context.scene.blrendertools.materials_to_swap
+    for ob in [o for o in bpy.data.objects if hasattr(o, 'material_slots')]:
+        for slot in [s for s in ob.material_slots if s.material == self.a]:
+            slot.material = self.b
+            print(f'Swapped {self.a.name} for {self.b.name} on {ob.name}')
+    self.a = None
+    self.b = None
 
 
 ########################################################################################################################
@@ -77,7 +83,7 @@ class SubdivisionSettings(bpy.types.PropertyGroup):
 class MaterialSwap(bpy.types.PropertyGroup):
 
     a: bpy.props.PointerProperty(name='Swap', type=bpy.types.Material)
-    b: bpy.props.PointerProperty(name='With', type=bpy.types.Material)
+    b: bpy.props.PointerProperty(name='With', type=bpy.types.Material, update=on_select_swap_material_b)
 
 
 class BlrendertoolsImageProperties(bpy.types.PropertyGroup):

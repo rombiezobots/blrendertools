@@ -47,12 +47,15 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
 
     def draw(self, context):
         lay = self.layout
-        lay.operator('blrendertools.create_material', icon='ADD')
 
-        row = lay.row(align=True)
-        row.prop(context.scene.blrendertools.materials_to_swap, 'a')
-        row.prop(context.scene.blrendertools.materials_to_swap, 'b')
-        row.operator('blrendertools.swap_materials', icon='FILE_REFRESH', text='')
+        box_buttons = lay.box()
+        box_buttons.operator('blrendertools.create_material', icon='ADD')
+
+        box_swap_materials = lay.box()
+        box_swap_materials.use_property_split = True
+        col = box_swap_materials.column(align=True)
+        col.prop(context.scene.blrendertools.materials_to_swap, 'a', text='Replace')
+        col.prop(context.scene.blrendertools.materials_to_swap, 'b')
 
         mats = [
             m
