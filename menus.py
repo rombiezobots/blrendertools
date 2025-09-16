@@ -27,6 +27,8 @@ class TOPBAR_MT_blrendertools(bpy.types.Menu):
 
     def draw(self, context):
         lay = self.layout
+        lay.label(text='Models')
+        lay.operator('blrendertools.manage_subdivision', icon='MOD_SUBSURF')
         lay.label(text='Materials')
         lay.operator('blrendertools.create_material')
         lay.label(text='Images')

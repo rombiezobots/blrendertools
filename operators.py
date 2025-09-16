@@ -18,6 +18,80 @@ else:
 ########################################################################################################################
 
 
+class BLRENDERTOOLS_OT_manage_subdivision(bpy.types.Operator):
+    '''Manage Subdivision Surface modifiers'''
+
+    bl_idname = 'blrendertools.manage_subdivision'
+    bl_label = 'Subdivision Manager'
+    bl_options = {'BLOCKING'}
+
+    collection_index: bpy.props.IntProperty()
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self, width=500)
+
+    def draw(self, context):
+        lay = self.layout
+        lay.use_property_split = True
+        lay.use_property_decorate = False
+
+        row_active_collection = lay.row()
+        row_active_collection.prop(context.scene.blrendertools, 'active_collection_subdiv')
+        collection = context.scene.blrendertools.active_collection_subdiv
+        if not collection:
+            return
+        row_active_collection.separator()
+        row_active_collection.prop(collection.blrendertools.subdivision, 'enable')
+        if not collection.blrendertools.subdivision.enable:
+            return
+        row_active_collection.operator('blrendertools.update_subdiv', text='', icon='FILE_REFRESH')
+
+        box_collection_props = lay.box()
+
+        row_header = box_collection_props.row()
+        row_align = row_header.row(align=True)
+        row_align.prop(collection.blrendertools.subdivision, 'name', text='')
+        row_align.prop(collection.blrendertools.subdivision, 'show_on_cage', text='', icon='MESH_DATA')
+        row_align.prop(collection.blrendertools.subdivision, 'show_in_editmode', text='', icon='EDITMODE_HLT')
+        row_align.prop(collection.blrendertools.subdivision, 'show_viewport', text='', icon='RESTRICT_VIEW_OFF')
+        row_align.prop(collection.blrendertools.subdivision, 'show_render', text='', icon='RESTRICT_RENDER_OFF')
+        row_header.prop(collection.blrendertools.subdivision, 'remove', text='', icon='X')
+
+        row_subdiv_type = box_collection_props.row(align=True)
+        row_subdiv_type.use_property_split = False
+        row_subdiv_type.prop(collection.blrendertools.subdivision, 'subdivision_type', expand=True)
+
+        col_body = box_collection_props.column()
+
+        col_levels = col_body.column(align=True)
+        col_levels.prop(collection.blrendertools.subdivision, 'levels')
+        col_levels.prop(collection.blrendertools.subdivision, 'render_levels')
+
+        col_body.prop(collection.blrendertools.subdivision, 'show_only_control_edges')
+        col_body.prop(collection.blrendertools.subdivision, 'uv_smooth')
+        col_body.prop(collection.blrendertools.subdivision, 'boundary_smooth')
+        col_body.prop(collection.blrendertools.subdivision, 'force_modifier')
+
+    def execute(self, context):
+        objects = [
+            ob
+            for ob in bpy.data.collections[self.collection_index].objects
+            if not common.is_datablock_linked(datablock=ob)
+        ]
+        return {'FINISHED'}
+
+
+class BLRENDERTOOLS_OT_update_subdiv(bpy.types.Operator):
+    '''Update subdivision settings for objects inside this Collection'''
+
+    bl_idname = 'blrendertools.update_subdiv'
+    bl_label = 'Update Subdivision In Collection'
+    bl_options = {'BLOCKING'}
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+
 class BLRENDERTOOLS_OT_create_material(bpy.types.Operator):
     '''Create a new material'''
 
@@ -213,6 +287,8 @@ class BLRENDERTOOLS_OT_update_image_sequence_nodes(bpy.types.Operator):
 
 register, unregister = bpy.utils.register_classes_factory(
     [
+        BLRENDERTOOLS_OT_manage_subdivision,
+        BLRENDERTOOLS_OT_update_subdiv,
         BLRENDERTOOLS_OT_assign_material,
         BLRENDERTOOLS_OT_create_material,
         BLRENDERTOOLS_OT_swap_materials,
