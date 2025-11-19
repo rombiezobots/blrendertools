@@ -16,15 +16,17 @@ else:
 
 
 def on_select_swap_material_b(self, context):
-    if not (self.a or self.b):
+    materials_to_swap = [m for m in bpy.data.materials if m.blrendertools.is_selected]
+    if not (materials_to_swap or self.material_swap):
         return
-    # mts = context.scene.blrendertools.materials_to_swap
     for ob in [o for o in bpy.data.objects if hasattr(o, 'material_slots')]:
-        for slot in [s for s in ob.material_slots if s.material == self.a]:
-            slot.material = self.b
-            print(f'Swapped {self.a.name} for {self.b.name} on {ob.name}')
-    self.a = None
-    self.b = None
+        for slot in [s for s in ob.material_slots if s.material in materials_to_swap]:
+            original_name = slot.material.name
+            slot.material = self.material_swap
+            print(f'Swapped {original_name} for {self.material_swap.name} on {ob.name}')
+    for m in materials_to_swap:
+        bpy.data.materials.remove(material=m)
+    self.material_swap = None
 
 
 ########################################################################################################################
@@ -80,12 +82,6 @@ class SubdivisionSettings(bpy.types.PropertyGroup):
     )
 
 
-class MaterialSwap(bpy.types.PropertyGroup):
-
-    a: bpy.props.PointerProperty(name='Swap', type=bpy.types.Material)
-    b: bpy.props.PointerProperty(name='With', type=bpy.types.Material, update=on_select_swap_material_b)
-
-
 class BlrendertoolsImageProperties(bpy.types.PropertyGroup):
 
     frame_start: bpy.props.IntProperty(name='Start')
@@ -96,6 +92,7 @@ class BlrendertoolsImageProperties(bpy.types.PropertyGroup):
 class BlrendertoolsMaterialProperties(bpy.types.PropertyGroup):
 
     is_panel_open: bpy.props.BoolProperty(default=False)
+    is_selected: bpy.props.BoolProperty(name='Select', default=False)
 
 
 class BlrendertoolsCollectionProperties(bpy.types.PropertyGroup):
@@ -105,8 +102,10 @@ class BlrendertoolsCollectionProperties(bpy.types.PropertyGroup):
 
 class BlrendertoolsSceneProperties(bpy.types.PropertyGroup):
 
-    materials_to_swap: bpy.props.PointerProperty(name='Materials to Swap', type=MaterialSwap)
     active_collection_subdiv: bpy.props.PointerProperty(name='Collection', type=bpy.types.Collection)
+    material_swap: bpy.props.PointerProperty(
+        name='Replace Selected With', type=bpy.types.Material, update=on_select_swap_material_b
+    )
 
 
 ########################################################################################################################
@@ -116,7 +115,6 @@ class BlrendertoolsSceneProperties(bpy.types.PropertyGroup):
 
 classes = [
     SubdivisionSettings,
-    MaterialSwap,
     BlrendertoolsMaterialProperties,
     BlrendertoolsCollectionProperties,
     BlrendertoolsSceneProperties,
