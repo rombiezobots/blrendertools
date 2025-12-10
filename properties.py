@@ -16,11 +16,16 @@ else:
 
 
 def on_select_swap_material_b(self, context):
-    materials_to_swap = [m for m in bpy.data.materials if m.blrendertools.is_selected]
-    if not (materials_to_swap or self.material_swap):
+    if not self.material_swap:
         return
-    for ob in [o for o in bpy.data.objects if hasattr(o, 'material_slots')]:
-        for slot in [s for s in ob.material_slots if s.material in materials_to_swap]:
+    materials_to_swap = [m for m in bpy.data.materials if m.blrendertools.is_selected]
+    if not materials_to_swap:
+        return
+    objects_with_materials = [o for o in bpy.data.objects if hasattr(o, 'material_slots')]
+    for ob in objects_with_materials:
+        for slot in [
+            s for s in ob.material_slots if s.material in materials_to_swap and not s.material == self.material_swap
+        ]:
             original_name = slot.material.name
             slot.material = self.material_swap
             print(f'Swapped {original_name} for {self.material_swap.name} on {ob.name}')
@@ -104,7 +109,9 @@ class BlrendertoolsSceneProperties(bpy.types.PropertyGroup):
 
     active_collection_subdiv: bpy.props.PointerProperty(name='Collection', type=bpy.types.Collection)
     material_swap: bpy.props.PointerProperty(
-        name='Replace Selected With', type=bpy.types.Material, update=on_select_swap_material_b
+        name='Replace Selected With',
+        type=bpy.types.Material,
+        update=on_select_swap_material_b,
     )
 
 

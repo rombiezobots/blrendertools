@@ -192,7 +192,14 @@ class BLRENDERTOOLS_OT_reveal_material_users(bpy.types.Operator):
 
     material_name: bpy.props.StringProperty()
 
+    @classmethod
+    def poll(cls, context):
+        return context.mode == 'OBJECT'
+
     def execute(self, context):
+        bpy.ops.object.select_all(action='DESELECT')
+        objects = [ob for ob in bpy.data.objects if hasattr(ob, 'material_slots')]
+
         names = []
         for ob in bpy.data.objects:
             if hasattr(ob, 'material_slots'):
