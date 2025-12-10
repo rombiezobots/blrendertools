@@ -76,7 +76,18 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
             reveal_material_users.material_name = mat.name
             assign_material = row_header.operator('blrendertools.assign_material', text='', icon='MATERIAL_DATA')
             assign_material.material_name = mat.name
-            row_header.prop(mat.blrendertools, 'is_selected', text='', icon='FILE_REFRESH')
+            row_header.prop(
+                mat,
+                'use_fake_user',
+                text='',
+                icon='FAKE_USER_ON' if mat.use_fake_user else 'FAKE_USER_OFF',
+            )
+            row_header.prop(
+                mat.blrendertools,
+                'is_selected',
+                text='',
+                icon='FILE_REFRESH',
+            )
 
             # Extras.
             if panels[mat.name][1]:
