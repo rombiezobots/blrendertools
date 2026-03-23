@@ -115,6 +115,11 @@ class BlrendertoolsSceneProperties(bpy.types.PropertyGroup):
     )
 
 
+class BlrendertoolsViewLayerProperties(bpy.types.PropertyGroup):
+
+    notes: bpy.props.StringProperty(name='Notes')
+
+
 ########################################################################################################################
 # Registration
 ########################################################################################################################
@@ -126,6 +131,7 @@ classes = [
     BlrendertoolsCollectionProperties,
     BlrendertoolsSceneProperties,
     BlrendertoolsImageProperties,
+    BlrendertoolsViewLayerProperties,
 ]
 
 
@@ -148,9 +154,14 @@ def register():
         type=BlrendertoolsImageProperties,
         name='blrendertools',
     )
+    bpy.types.ViewLayer.blrendertools = bpy.props.PointerProperty(
+        type=BlrendertoolsViewLayerProperties,
+        name='blrendertools',
+    )
 
 
 def unregister():
+    del bpy.types.ViewLayer.blrendertools
     del bpy.types.Image.blrendertools
     del bpy.types.Material.blrendertools
     del bpy.types.Collection.blrendertools
