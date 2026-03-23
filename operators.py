@@ -282,7 +282,9 @@ class BLRENDERTOOLS_OT_guess_frame_range(bpy.types.Operator):
     def execute(self, context):
         images = [img for img in bpy.data.images if img.source == 'SEQUENCE']
         for img in images:
-            first_node = next((n for n in context.scene.node_tree.nodes if n.type == 'IMAGE' and n.image == img), None)
+            first_node = next(
+                (n for n in context.scene.compositing_node_group.nodes if n.type == 'IMAGE' and n.image == img), None
+            )
             if first_node:
                 img.blrendertools.frame_start = first_node.frame_start
                 img.blrendertools.frame_end = first_node.frame_start + first_node.frame_duration - 1
@@ -300,7 +302,7 @@ class BLRENDERTOOLS_OT_update_image_sequence_nodes(bpy.types.Operator):
     def execute(self, context):
         images = [img for img in bpy.data.images if img.source == 'SEQUENCE']
         for img in images:
-            nodes = [n for n in context.scene.node_tree.nodes if n.type == 'IMAGE' and n.image == img]
+            nodes = [n for n in context.scene.compositing_node_group.nodes if n.type == 'IMAGE' and n.image == img]
             for node in nodes:
                 node.frame_duration = img.blrendertools.frame_end - img.blrendertools.frame_start + 1
                 node.frame_start = img.blrendertools.frame_start

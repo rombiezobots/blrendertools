@@ -28,7 +28,7 @@ else:
 
 bl_info = {
     'author': 'rombiezobots',
-    'blender': (4, 2, 0),
+    'blender': (5, 0, 0),
     'category': 'Render',
     'name': 'blrendertools',
     'wiki_url': 'https://rombiezobots.com/',
