@@ -3,7 +3,16 @@
 ########################################################################################################################
 
 
-if 'bpy' in locals():
+_needs_reload = 'bpy' in locals()
+import bpy
+from . import operators
+from . import panels
+from . import properties
+from . import uilists
+from . import menus
+from . import ui
+
+if _needs_reload:
     import importlib
 
     operators = importlib.reload(operators)
@@ -11,14 +20,7 @@ if 'bpy' in locals():
     properties = importlib.reload(properties)
     uilists = importlib.reload(uilists)
     menus = importlib.reload(menus)
-
-else:
-    import bpy
-    from . import operators
-    from . import panels
-    from . import properties
-    from . import uilists
-    from . import menus
+    ui = importlib.reload(ui)
 
 
 ########################################################################################################################
@@ -46,6 +48,7 @@ modules = [
     operators,
     panels,
     menus,
+    ui,
 ]
 
 
