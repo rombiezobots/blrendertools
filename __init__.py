@@ -5,36 +5,27 @@
 
 _needs_reload = 'bpy' in locals()
 import bpy
-from . import operators
-from . import panels
+from . import animation
+from . import cameras
+from . import images
+from . import materials
+from . import subdivision
+from . import view_layers
 from . import properties
-from . import uilists
 from . import menus
-from . import ui
+
 
 if _needs_reload:
     import importlib
 
-    operators = importlib.reload(operators)
-    panels = importlib.reload(panels)
+    animation = importlib.reload(animation)
+    cameras = importlib.reload(cameras)
+    images = importlib.reload(images)
+    materials = importlib.reload(materials)
+    subdivision = importlib.reload(subdivision)
+    view_layers = importlib.reload(view_layers)
     properties = importlib.reload(properties)
-    uilists = importlib.reload(uilists)
     menus = importlib.reload(menus)
-    ui = importlib.reload(ui)
-
-
-########################################################################################################################
-# Add-on information
-########################################################################################################################
-
-
-bl_info = {
-    'author': 'rombiezobots',
-    'blender': (5, 0, 0),
-    'category': 'Render',
-    'name': 'blrendertools',
-    'wiki_url': 'https://rombiezobots.com/',
-}
 
 
 ########################################################################################################################
@@ -42,24 +33,26 @@ bl_info = {
 ########################################################################################################################
 
 
-modules = [
-    properties,
-    uilists,
-    operators,
-    panels,
-    menus,
-    ui,
-]
-
-
 def register():
-    for mod in modules:
-        mod.register()
+    animation.register()
+    cameras.register()
+    images.register()
+    materials.register()
+    subdivision.register()
+    view_layers.register()
+    properties.register()
+    menus.register()
 
 
 def unregister():
-    for mod in reversed(modules):
-        mod.unregister()
+    menus.unregister()
+    properties.unregister()
+    view_layers.unregister()
+    subdivision.unregister()
+    materials.unregister()
+    images.unregister()
+    cameras.unregister()
+    animation.unregister()
 
 
 if __name__ == '__main__':

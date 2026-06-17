@@ -7,16 +7,19 @@ import bpy
 
 
 ########################################################################################################################
+# Functions
+########################################################################################################################
+
+
+########################################################################################################################
 # Classes
 ########################################################################################################################
 
 
-class BLRENDERTOOLS_UL_view_layers(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
-        layout.use_property_decorate = False
-        row = layout.row()
-        row.prop(item, 'use', text='')
-        row.label(text=item.name)
+class ImagesImageProperties(bpy.types.PropertyGroup):
+    frame_start: bpy.props.IntProperty(name='Start')
+    frame_end: bpy.props.IntProperty(name='End')
+    frame_entry: bpy.props.IntProperty(name='Entry')
 
 
 ########################################################################################################################
@@ -26,6 +29,6 @@ class BLRENDERTOOLS_UL_view_layers(bpy.types.UIList):
 
 register, unregister = bpy.utils.register_classes_factory(
     [
-        BLRENDERTOOLS_UL_view_layers,
+        ImagesImageProperties,
     ]
 )

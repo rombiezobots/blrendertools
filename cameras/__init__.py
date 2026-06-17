@@ -3,28 +3,24 @@
 ########################################################################################################################
 
 
+_needs_reload = 'bpy' in locals()
 import bpy
+from . import ui
+
+if _needs_reload:
+    import importlib
+
+    ui = importlib.reload(ui)
+
+
+########################################################################################################################
+# Globals
+########################################################################################################################
 
 
 ########################################################################################################################
 # Functions
 ########################################################################################################################
-
-
-def draw_viewport_header(self, context):
-    lay = self.layout
-    lay.separator_spacer()
-    lay.label(text='blrendertools')
-    lay.separator()
-    if (
-        not (context.scene.camera or context.scene.camera.data.show_background_images)
-        or len(context.scene.camera.data.background_images) == 0
-    ):
-        return
-    image = next((i for i in context.scene.camera.data.background_images if i.show_background_image), None)
-    if not image:
-        return
-    lay.prop(image, 'alpha', text='Image Opacity')
 
 
 ########################################################################################################################
@@ -37,9 +33,9 @@ def draw_viewport_header(self, context):
 ########################################################################################################################
 
 
-def register():
-    bpy.types.VIEW3D_HT_header.append(draw_viewport_header)
-
-
-def unregister():
-    bpy.types.VIEW3D_HT_header.remove(draw_viewport_header)
+register, unregister = bpy.utils.register_submodule_factory(
+    module_name=__name__,
+    submodule_names=[
+        'ui',
+    ],
+)

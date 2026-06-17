@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+
+id = "blrendertools"
+version = "0.0.2"
+name = "blrendertools"
+tagline = "User interface extensions for anything related to rendering"
+maintainer = "rombiezobots"
+type = "add-on"
+website = "https://rombiezobots.com/"
+tags = ["Camera", "Compositing", "Lighting", "Material", "Node", "Render"]
+
+blender_version_min = "5.1.0"
+
+license = ["SPDX:GPL-3.0-or-later"]

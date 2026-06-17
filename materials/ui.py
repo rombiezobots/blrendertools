@@ -5,40 +5,12 @@
 
 import bpy
 from operator import attrgetter
-from . import common
+from .. import utils
 
 
 ########################################################################################################################
 # Classes
 ########################################################################################################################
-
-
-class PROPERTIES_PT_layer_manager(bpy.types.Panel):
-    bl_context = 'view_layer'
-    bl_label = 'blrendertools'
-    bl_region_type = 'WINDOW'
-    bl_space_type = 'PROPERTIES'
-
-    def draw(self, context):
-        lay = self.layout
-        lay.use_property_decorate = False
-
-        for layer in bpy.context.scene.view_layers:
-            box = lay.box()
-            col = box.column(align=True)
-            row = col.row(align=True)
-            row.prop(layer, 'use', text='')
-            row.prop(layer, 'name', text='')
-            man = row.operator('blrendertools.manage_layer_collections', icon='OUTLINER_COLLECTION', text='')
-            man.layer_name = layer.name
-            delete_view_layer = row.operator('blrendertools.delete_view_layer', icon='X', text='')
-            delete_view_layer.layer_name = layer.name
-            row = col.row(align=True)
-            row.prop(layer, 'samples')
-            row.prop(layer, 'material_override', text='')
-            row.prop(layer, 'world_override', text='')
-            row = col.row(align=True)
-            row.prop(layer.blrendertools, 'notes', text='')
 
 
 class PROPERTIES_PT_material_manager(bpy.types.Panel):
@@ -56,18 +28,18 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
         box_swap_materials = lay.box()
         box_swap_materials.use_property_split = True
         col = box_swap_materials.column(align=True)
-        col.prop(context.scene.blrendertools, 'material_swap')
+        col.prop(context.scene.blrendertools.materials, 'material_swap')
 
         mats = [
             m
             for m in sorted(bpy.data.materials, key=attrgetter('name'))
-            if not common.is_datablock_linked(datablock=m) and not m.grease_pencil
+            if not utils.is_datablock_linked(datablock=m) and not m.grease_pencil
         ]
 
         # First create a dict to not lose the panel references.
         panels = {}
         for mat in mats:
-            panels[mat.name] = lay.panel_prop(mat.blrendertools, 'is_panel_open')
+            panels[mat.name] = lay.panel_prop(mat.blrendertools.materials, 'is_panel_open')
 
             # Top row.
             row_header = panels[mat.name][0].row(align=True)
@@ -85,7 +57,7 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
                 icon='FAKE_USER_ON' if mat.use_fake_user else 'FAKE_USER_OFF',
             )
             row_header.prop(
-                mat.blrendertools,
+                mat.blrendertools.materials,
                 'is_selected',
                 text='',
                 icon='FILE_REFRESH',
@@ -107,7 +79,6 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
 
 register, unregister = bpy.utils.register_classes_factory(
     [
-        PROPERTIES_PT_layer_manager,
         PROPERTIES_PT_material_manager,
     ]
 )
