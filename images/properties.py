@@ -17,9 +17,9 @@ import bpy
 
 
 class ImagesImageProperties(bpy.types.PropertyGroup):
-    frame_start: bpy.props.IntProperty(name='Start')
-    frame_end: bpy.props.IntProperty(name='End')
-    frame_entry: bpy.props.IntProperty(name='Entry')
+    frame_start: bpy.props.IntProperty(name='Read From')
+    frame_end: bpy.props.IntProperty(name='Read To')
+    frame_entry: bpy.props.IntProperty(name='Entry Frame')
 
 
 ########################################################################################################################
