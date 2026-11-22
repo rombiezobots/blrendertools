@@ -44,6 +44,7 @@ class PROPERTIES_PT_material_manager(bpy.types.Panel):
             # Top row.
             row_header = panels[mat.name][0].row(align=True)
             split_name_color = row_header.split(factor=0.65, align=True)
+            split_name_color.enabled = not utils.is_datablock_linked(datablock=mat)
             split_name_color.prop(mat, 'name', text='')
             split_name_color.prop(mat, 'diffuse_color', text='')
             reveal_material_users = row_header.operator('blrendertools.reveal_material_users', text='', icon='USER')
