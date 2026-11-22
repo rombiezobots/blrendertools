@@ -3,7 +3,10 @@
 ########################################################################################################################
 
 
+from typing import ClassVar
+
 import bpy
+
 from .. import utils
 
 
@@ -38,7 +41,7 @@ class BLRENDERTOOLS_OT_manage_subdivision(bpy.types.Operator):
 
     bl_idname = 'blrendertools.manage_subdivision'
     bl_label = 'Subdivision Manager'
-    bl_options = {'BLOCKING'}
+    bl_options: ClassVar[set] = {'BLOCKING'}
 
     collection_index: bpy.props.IntProperty()
 
@@ -120,7 +123,7 @@ class BLRENDERTOOLS_OT_update_subdiv(bpy.types.Operator):
 
     bl_idname = 'blrendertools.update_subdiv'
     bl_label = 'Update Subdivision In Collection'
-    bl_options = {'BLOCKING'}
+    bl_options: ClassVar[set] = {'BLOCKING'}
 
     def execute(self, context):
         return {'FINISHED'}
