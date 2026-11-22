@@ -5,25 +5,18 @@
 
 _needs_reload = 'bpy' in locals()
 import bpy
-from . import animation
-from . import cameras
-from . import images
-from . import materials
-from . import subdivision
-from . import view_layers
-from . import properties
-from . import menus
 
+from . import animation, images, materials, menus, properties, subdivision, view_layers
 
 if _needs_reload:
     import importlib
 
     animation = importlib.reload(animation)
-    cameras = importlib.reload(cameras)
     images = importlib.reload(images)
     materials = importlib.reload(materials)
     subdivision = importlib.reload(subdivision)
     view_layers = importlib.reload(view_layers)
+    # These two refer to the packages above, so they are reloaded after them
     properties = importlib.reload(properties)
     menus = importlib.reload(menus)
 
@@ -35,7 +28,6 @@ if _needs_reload:
 
 def register():
     animation.register()
-    cameras.register()
     images.register()
     materials.register()
     subdivision.register()
@@ -51,7 +43,6 @@ def unregister():
     subdivision.unregister()
     materials.unregister()
     images.unregister()
-    cameras.unregister()
     animation.unregister()
 
 

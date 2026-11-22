@@ -5,6 +5,8 @@
 
 _needs_reload = 'bpy' in locals()
 import bpy
+
+from .. import utils
 from . import operators
 from . import properties
 from . import ui
@@ -37,7 +39,7 @@ if _needs_reload:
 ########################################################################################################################
 
 
-register, unregister = bpy.utils.register_submodule_factory(
+register, unregister = utils.register_submodule_factory(
     module_name=__name__,
     submodule_names=[
         'operators',
